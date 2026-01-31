@@ -2,10 +2,162 @@ import { useState, useEffect } from 'react';
 import SensorCard from '@/components/sensors/SensorCard';
 import { sensorData, SensorData } from '@/data/mockData';
 import { RefreshCw, Clock, Leaf, TrendingUp, AlertTriangle } from 'lucide-react';
+import Loading from './Loading';
+import { parseFields } from '@/hooks/parseFields';
+
 
 const Dashboard = () => {
 
+  const [thinkSpeakData,setThinkSpeakData]=useState(null)
 
+useEffect(() => {
+  // first time call
+  fetchThinkSpeak();
+
+  // every 15 seconds call
+  const interval = setInterval(() => {
+    fetchThinkSpeak();
+  }, 5000); // 5 seconds
+
+  // cleanup (important)
+  return () => clearInterval(interval);
+}, []);
+
+
+const fetchThinkSpeak = () => {
+  fetch(
+    "https://api.thingspeak.com/channels/3232296/feeds.json?api_key=1DF7VGBJUG072J8I&results=1",
+    {
+      method: "GET",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      5
+
+
+
+
+
+
+
+      
+    }
+  )
+    .then((res) => res.json())
+    .then((data) => {
+      const lastFeed = data.feeds[0]; // only one result
+
+      setThinkSpeakData(lastFeed);
+    })
+    .catch((err) => {
+      console.log("Error fetching ThingSpeak data", err);
+    });
+};
+
+
+console.log("overall all entry" , thinkSpeakData)
+
+console.log("field1",thinkSpeakData?.field1)
+console.log("field2",thinkSpeakData?.field2)
+console.log("field3",thinkSpeakData?.field3)
+console.log("field4",thinkSpeakData?.field4)
+console.log("field5",thinkSpeakData?.field5)
 
 
 
@@ -76,8 +228,65 @@ const Dashboard = () => {
   const goodSensors = sensors.filter((s) => s.status === 'good').length;
   const warningSensors = sensors.filter((s) => s.status === 'warning').length;
 
+  if(!thinkSpeakData){
+    return <Loading />
+  }
+
   return (
     <div className="page-container">
+
+      {/* testing */}
+
+<div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+  {/* Soil Moisture */}
+  <div className="rounded-2xl bg-white p-6 shadow-md transition hover:shadow-xl">
+    <p className="text-sm text-gray-500">Soil Moisture</p>
+    <p className="mt-2 text-3xl font-semibold text-green-600">
+      {thinkSpeakData?.field1 ?? "--"}
+    </p>
+  </div>
+
+  {/* Temperature */}
+  <div className="rounded-2xl bg-white p-6 shadow-md transition hover:shadow-xl">
+    <p className="text-sm text-gray-500">Temperature</p>
+    <p className="mt-2 text-3xl font-semibold text-red-500">
+      {thinkSpeakData?.field2 ?? "--"} °C
+    </p>
+  </div>
+
+  {/* Humidity */}
+  <div className="rounded-2xl bg-white p-6 shadow-md transition hover:shadow-xl">
+    <p className="text-sm text-gray-500">Humidity</p>
+    <p className="mt-2 text-3xl font-semibold text-blue-500">
+      {thinkSpeakData?.field3 ?? "--"} %
+    </p>
+  </div>
+
+  {/* Water Level */}
+  <div className="rounded-2xl bg-white p-6 shadow-md transition hover:shadow-xl">
+    <p className="text-sm text-gray-500">Water Level</p>
+    <p className="mt-2 text-3xl font-semibold text-cyan-600">
+      {thinkSpeakData?.field4 ?? "--"}
+    </p>
+  </div>
+
+  {/* Motor Status */}
+  <div className="rounded-2xl bg-white p-6 shadow-md transition hover:shadow-xl">
+    <p className="text-sm text-gray-500">Motor Status</p>
+    <p
+      className={`mt-2 inline-block rounded-full px-4 py-1 text-lg font-semibold text-white ${
+        thinkSpeakData?.field5 === "1"
+          ? "bg-green-500"
+          : "bg-red-500"
+      }`}
+    >
+      {thinkSpeakData?.field5 === "1" ? "ON" : "OFF"}
+    </p>
+  </div>
+</div>
+
+
+
       {/* Header */}
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
